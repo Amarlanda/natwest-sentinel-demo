@@ -1,0 +1,11 @@
+# AWS Provider Configuration
+access_key = "your-access-key"
+secret_key = "your-secret-key"
+region     = "eu-west-2"
+
+# WAF Configuration
+waf_name   = "my-waf-web-acl"
+
+# VPC Configuration
+vpc_id     = "vpc-12345678"
+subnet_ids = ["subnet-12345678", "subnet-87654321"] # Minimum 2 subnets in different AZs
