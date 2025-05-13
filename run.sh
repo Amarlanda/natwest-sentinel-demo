@@ -1,7 +1,15 @@
 #!/bin/bash
-
+# This script automates various development and deployment tasks, including:
+# - Managing directory navigation for focused operations.
+# - Loading environment variables from a .env file.
+# - Validating the presence of required environment variables.
+# - Orchestrating Terraform workflows (initialize, plan, apply).
+# - Executing Sentinel policy checks (currently using 'sentinel test').
+# The main function coordinates these operations, with specific tasks (like run_full or run_sentinel) selectable.
 
 function move_dir() {
+    # Manages directory changes, allowing to move to a new directory or return to the previous one.
+    # Function body: handles directory navigation logic
     # Store current directory
     old_dir=$(pwd)
     
@@ -24,6 +32,8 @@ function move_dir() {
 }
 
 function export_env() {
+    # Loads environment variables from a .env file located in the current directory.
+    # Function body: loads and exports environment variables
     echo "Exporting environment variables from .env file..."
     export $(cat .env | xargs)
     echo "Environment variables loaded successfully:"
@@ -33,6 +43,8 @@ function export_env() {
 }
 
 function check_envs_set() {
+    # Verifies that essential AWS environment variables (AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_DEFAULT_REGION) are set, exiting if any are missing.
+    # Function body: checks for required environment variables
     echo "Checking required environment variables..."
     # if env not set exit and tell user why
     if [ -z "$AWS_ACCESS_KEY_ID" ]; then
@@ -54,11 +66,15 @@ function check_envs_set() {
 }
 
 function terraform_init() {
+    # Initializes the Terraform working directory by running `terraform init`.
+    # Function body: initializes Terraform configuration
     echo "Initializing Terraform configuration..."
     terraform init
 }
 
 function terraform_plan() {
+    # Generates a Terraform execution plan. If an argument is provided, it saves the plan as `plan.json`.
+    # Function body: generates Terraform execution plan
     echo "Generating Terraform execution plan..."
     #if variable is passed in then keep plan and output it as JSON.
     if [ -n "$1" ]; then
@@ -71,11 +87,15 @@ function terraform_plan() {
 }
 
 function terraform_apply() {
+    # Applies the Terraform configuration using `terraform apply`.
+    # Function body: applies Terraform configuration
     echo "Applying Terraform configuration..."
     terraform apply
 } 
 
 function run_full(){
+    # Orchestrates a full Terraform deployment: navigates to the terraform directory, loads environment variables, checks them, initializes Terraform, and generates a plan (saving it as `plan.json`).
+    # Function body: orchestrates full Terraform deployment
     echo "Starting Terraform deployment process..."
     move_dir "terraform"
     export_env
@@ -87,6 +107,8 @@ function run_full(){
 }
 
 function run_sentinel() {
+    # Executes Sentinel policy checks by navigating to the sentinel directory and running `sentinel test`.
+    # Function body: executes Sentinel policy checks
     echo "Running Sentinel policies..."
     move_dir "sentinel"
 
@@ -94,8 +116,10 @@ function run_sentinel() {
     sentinel test
     move_dir
 }
-function main() {
 
+function main() {
+    # calls selected workflow functions (currently `run_sentinel`).
+    # Function body: orchestrates script execution
   reset; clear 
   echo "starting run.sh"
   # run_full
