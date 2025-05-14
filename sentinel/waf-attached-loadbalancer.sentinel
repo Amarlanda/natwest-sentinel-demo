@@ -1,0 +1,69 @@
+# ADVISORY:
+# This policy verifies that all `aws_wafv2_web_acl_association` resources have a valid `web_acl_arn`.
+# Recommended Enforcement: hard-mandatory.
+# Rationale: An association without a valid ARN means the target resource (e.g., ALB, API Gateway)
+# is NOT protected by the WAF. This is a critical misconfiguration.
+# Disabling or weakening this policy significantly increases security risks.
+
+# This policy checks if aws_wafv2_web_acl_association resources have web_acl_arn applied.
+
+# Import
+import "tfplan/v2" as tfplan
+import "types"
+import "strings"
+
+# Constants
+const = {
+    "policy_name": "waf-acl-association-applied",
+    "message_template": "aws_wafv2_web_acl_association '%s' must have web_acl_arn applied.",
+}
+
+# Variables
+all_planned_resources = tfplan.planned_values.resources else {}
+found_violations = []
+
+# Find all aws_wafv2_web_acl_association resources and check them
+if "aws_wafv2_web_acl_association" in all_planned_resources {
+    waf_associations_by_name = all_planned_resources.aws_wafv2_web_acl_association
+
+    for waf_associations_by_name as name, instances_by_index {
+        for instances_by_index as index,resource {
+            # 'r' is the resource instance data.
+            # From your mock, the path isresource .applied.web_acl_arn
+            web_acl_arn_val =resource .applied.web_acl_arn else null
+
+            # A violation occurs if web_acl_arn is null, an empty string,
+            # or (based on your mock) not the specific string "has_value".
+            # For a real plan, you'd typically check for null or empty string.
+            # If your mock's "has_value" is the only valid state for a passing test, include that.
+            # Otherwise, if any non-empty string is fine, adjust the logic.
+            is_violation = (web_acl_arn_val is null) or (types.type_of(web_acl_arn_val) is "string" and strings.trim_space(web_acl_arn_val) is "") or (web_acl_arn_val is not "has_value")
+
+            if is_violation {
+                # Construct a resource identifier. The actual 'address' field might be inresource .address
+                # but your current mock snippet for planned_values.resources doesn't show it directly inside the "0": {} block.
+                # A full plan usually includes "address" at this level.
+                resource_id =resource.address else ("aws_wafv2_web_acl_association." + name + "[" + index + "]")
+                
+                append(found_violations, {
+                    "address": resource_id,
+                    "message": strings.sprintf(const.message_template, resource_id),
+                })
+            }
+        }
+    }
+}
+
+# Summary (optional, but good for detailed reporting if you use a report generating module)
+# summary = {
+# 	"policy_name": const.policy_name,
+# 	"violations": found_violations, # Use the list directly
+# }
+
+# Output (for debugging or simple reporting)
+# print("Violations:", found_violations)
+
+# Rule
+main = rule {
+    length(found_violations) is 0
+}

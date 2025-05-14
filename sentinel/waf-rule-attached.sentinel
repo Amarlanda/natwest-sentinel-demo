@@ -1,0 +1,45 @@
+# ADVISORY:
+# This policy ensures a 'RateLimitRule' exists in the main WAF ACL (`aws_wafv2_web_acl.main`).
+# Recommended Enforcement: soft-mandatory.
+# Rationale: Rate limiting is critical for protecting against DoS, brute-force, and other automated attacks.
+# Absence of this rule significantly increases security risks.
+# Deviate only under exceptional, documented circumstances with risk assessment.
+
+import "tfplan/v2" as tfplan
+import "types"
+import "strings"
+
+# Rule name we are looking for
+rule_name = "RateLimitRule"
+
+# Get the WAF ACL resource
+waf_acl = tfplan.resource_changes["aws_wafv2_web_acl.main"]
+  print("waf_acl", waf_acl)
+
+# Check if the WAF ACL exists
+waf_exists = waf_acl is not null
+  print("waf_exists", waf_exists)
+
+# Helper function to check if a rule with a given name exists in the rule list
+rule_exists_with_name = func(resource, name) {
+    print("resource", resource)
+    # Check if the resource has a rule attribute
+    print("resource.change.after.rule", resource.change.after.rule)
+    if types.type_of(resource.change.after.rule) != "list" {
+        return false
+    }
+
+    found = any resource.change.after.rule as r {
+        r.name is name
+    }
+
+    return found
+}
+
+# Use helper to check for RateLimitRule
+rate_limit_rule_applied = rule_exists_with_name(waf_acl, rule_name)
+
+# Final policy decision
+main = rule {
+    waf_exists and rate_limit_rule_applied
+}

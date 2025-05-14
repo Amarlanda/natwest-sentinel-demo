@@ -1,0 +1,33 @@
+planned_values = {
+    "outputs": {},
+    "resources": {
+        "aws_wafv2_web_acl_association": {
+            "main": {
+                "0": {
+                    "applied": {
+                        "web_acl_arn": "has_value",
+                    },
+                    "destroy": false,
+                    "diff": {
+                        "id": {
+                            "computed": true,
+                            "new": "",
+                            "old": "",
+                        },
+                        "resource_arn": {
+                            "computed": true,
+                            "new": "",
+                            "old": "",
+                        },
+                        "web_acl_arn": {
+                            "computed": false,
+                            "new": "has_value",
+                            "old": "",
+                        },
+                    },
+                    "requires_new": false,
+                },
+            },
+        },
+    },
+}

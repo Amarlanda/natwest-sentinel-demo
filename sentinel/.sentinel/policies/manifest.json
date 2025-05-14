@@ -1,0 +1,22 @@
+{
+	"records": [
+		{
+			"key": "enforce-waf-rate-limit-rule",
+			"source": "./waf-rule-attached.sentinel",
+			"sourceSum": "",
+			"dest": "/Users/bob/git/pers/natwest/sentinel/waf-rule-attached.sentinel"
+		},
+		{
+			"key": "enforce-waf-association-arn",
+			"source": "./waf-attached-loadbalancer.sentinel",
+			"sourceSum": "",
+			"dest": "/Users/bob/git/pers/natwest/sentinel/waf-attached-loadbalancer.sentinel"
+		},
+		{
+			"key": "enforce-waf-association-arn-full-plan",
+			"source": "./waf-attached-loadbalancer-full-plan.sentinel",
+			"sourceSum": "",
+			"dest": "/Users/bob/git/pers/natwest/sentinel/waf-attached-loadbalancer-full-plan.sentinel"
+		}
+	]
+}

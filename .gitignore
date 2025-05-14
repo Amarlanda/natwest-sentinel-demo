@@ -6,9 +6,10 @@
 **/.env
 **/.env.*
 
+#whoops
 # sentinel
-**.sentinel
-.sentinel
+# **.sentinel
+# .sentinel
 
 ### Terraform ###
 # Local .terraform directories
